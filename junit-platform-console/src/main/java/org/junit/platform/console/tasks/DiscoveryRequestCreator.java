@@ -13,10 +13,10 @@ package org.junit.platform.console.tasks;
 import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
 import static org.junit.platform.engine.discovery.ClassNameFilter.includeClassNamePattern;
+import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathRoots;
-import static org.junit.platform.engine.discovery.DiscoverySelectors.selectJavaClass;
-import static org.junit.platform.engine.discovery.DiscoverySelectors.selectJavaMethod;
-import static org.junit.platform.engine.discovery.DiscoverySelectors.selectJavaPackage;
+import static org.junit.platform.engine.discovery.DiscoverySelectors.selectMethod;
+import static org.junit.platform.engine.discovery.DiscoverySelectors.selectPackage;
 import static org.junit.platform.launcher.EngineFilter.excludeEngines;
 import static org.junit.platform.launcher.EngineFilter.includeEngines;
 import static org.junit.platform.launcher.TagFilter.excludeTags;
@@ -37,9 +37,9 @@ import org.junit.platform.commons.util.Preconditions;
 import org.junit.platform.commons.util.ReflectionUtils;
 import org.junit.platform.console.options.CommandLineOptions;
 import org.junit.platform.engine.DiscoverySelector;
-import org.junit.platform.engine.discovery.JavaClassSelector;
-import org.junit.platform.engine.discovery.JavaMethodSelector;
-import org.junit.platform.engine.discovery.JavaPackageSelector;
+import org.junit.platform.engine.discovery.ClassSelector;
+import org.junit.platform.engine.discovery.MethodSelector;
+import org.junit.platform.engine.discovery.PackageSelector;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 
@@ -127,8 +127,8 @@ class DiscoveryRequestCreator {
 	 * </ul>
 	 *
 	 * @param name the name to select; never {@code null} or blank
-	 * @return an instance of {@link JavaClassSelector}, {@link JavaMethodSelector}, or
-	 * {@link JavaPackageSelector}
+	 * @return an instance of {@link ClassSelector}, {@link MethodSelector}, or
+	 * {@link PackageSelector}
 	 * @throws PreconditionViolationException if the supplied name is {@code null},
 	 * blank, or does not specify a class, method, or package
 	 */
@@ -138,7 +138,7 @@ class DiscoveryRequestCreator {
 		try {
 			Optional<Class<?>> classOptional = ReflectionUtils.loadClass(name);
 			if (classOptional.isPresent()) {
-				return selectJavaClass(classOptional.get());
+				return selectClass(classOptional.get());
 			}
 		}
 		catch (Exception ex) {
@@ -149,7 +149,7 @@ class DiscoveryRequestCreator {
 			Optional<Method> methodOptional = ReflectionUtils.loadMethod(name);
 			if (methodOptional.isPresent()) {
 				Method method = methodOptional.get();
-				return selectJavaMethod(method.getDeclaringClass(), method);
+				return selectMethod(method.getDeclaringClass(), method);
 			}
 		}
 		catch (Exception ex) {
@@ -157,7 +157,7 @@ class DiscoveryRequestCreator {
 		}
 
 		if (ReflectionUtils.isPackage(name)) {
-			return selectJavaPackage(name);
+			return selectPackage(name);
 		}
 
 		throw new PreconditionViolationException(

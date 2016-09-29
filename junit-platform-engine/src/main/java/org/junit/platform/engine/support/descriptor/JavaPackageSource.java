@@ -17,6 +17,7 @@ import java.util.Objects;
 import org.junit.platform.commons.meta.API;
 import org.junit.platform.commons.util.Preconditions;
 import org.junit.platform.commons.util.ToStringBuilder;
+import org.junit.platform.engine.discovery.PackageSelector;
 
 /**
  * Java package based {@link org.junit.platform.engine.TestSource}.
@@ -25,7 +26,7 @@ import org.junit.platform.commons.util.ToStringBuilder;
  * implement {@link java.io.Serializable}.
  *
  * @since 1.0
- * @see org.junit.platform.engine.discovery.JavaPackageSelector
+ * @see PackageSelector
  */
 @API(Experimental)
 public class JavaPackageSource implements JavaSource {

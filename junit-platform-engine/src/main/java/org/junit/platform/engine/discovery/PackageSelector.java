@@ -17,7 +17,7 @@ import org.junit.platform.commons.util.ToStringBuilder;
 import org.junit.platform.engine.DiscoverySelector;
 
 /**
- * A {@link DiscoverySelector} that selects a Java package name so that
+ * A {@link DiscoverySelector} that selects a package name so that
  * {@link org.junit.platform.engine.TestEngine TestEngines} can discover
  * tests or containers based on packages.
  *
@@ -25,11 +25,11 @@ import org.junit.platform.engine.DiscoverySelector;
  * @see org.junit.platform.engine.support.descriptor.JavaPackageSource
  */
 @API(Experimental)
-public class JavaPackageSelector implements DiscoverySelector {
+public class PackageSelector implements DiscoverySelector {
 
 	private final String packageName;
 
-	JavaPackageSelector(String packageName) {
+	PackageSelector(String packageName) {
 		this.packageName = packageName;
 	}
 

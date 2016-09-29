@@ -10,12 +10,13 @@
 
 package org.junit.jupiter.engine;
 
-import static org.junit.platform.engine.discovery.DiscoverySelectors.selectJavaClass;
+import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 import static org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.request;
 
 import org.junit.platform.engine.ExecutionRequest;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.UniqueId;
+import org.junit.platform.engine.discovery.DiscoverySelectors;
 import org.junit.platform.engine.test.event.ExecutionEventRecorder;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
 
@@ -29,7 +30,7 @@ public abstract class AbstractJupiterTestEngineTests {
 	private final JupiterTestEngine engine = new JupiterTestEngine();
 
 	protected ExecutionEventRecorder executeTestsForClass(Class<?> testClass) {
-		return executeTests(request().selectors(selectJavaClass(testClass)).build());
+		return executeTests(request().selectors(selectClass(testClass)).build());
 	}
 
 	protected ExecutionEventRecorder executeTests(LauncherDiscoveryRequest request) {

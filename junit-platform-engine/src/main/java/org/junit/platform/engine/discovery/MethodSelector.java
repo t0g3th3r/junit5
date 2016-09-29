@@ -25,20 +25,21 @@ import org.junit.platform.engine.DiscoverySelector;
 /**
  * A {@link DiscoverySelector} that selects a {@link Method} so that
  * {@link org.junit.platform.engine.TestEngine TestEngines} can discover
- * tests or containers based on Java methods.
- *
- *  If a java {@link Method} is provided, the selector will return this
+ * tests or containers based on methods.
+ * <p>
+ * If a Java {@link Method} is provided, the selector will return this
  * {@link Method} and its method name accordingly. If the selector was
  * created with a {@link Class} and {@link Method} name, a {@link Class}
  * name and {@link Method} name, or only a full qualified {@link Method}
  * name, it will tries to lazy load the {@link Class} and {@link Method}
- * only on request.
+ * only on request. This way, this selector may also be used for non Java
+ * methods, e.g. with Spock Specifications.
  *
- * @since 1.0
  * @see org.junit.platform.engine.support.descriptor.JavaMethodSource
+ * @since 1.0
  */
 @API(Experimental)
-public class JavaMethodSelector implements DiscoverySelector {
+public class MethodSelector implements DiscoverySelector {
 
 	private static Pattern methodNameWithParametersPattern = Pattern.compile("([^(]+)\\(([^)]*)\\)");
 
@@ -47,18 +48,18 @@ public class JavaMethodSelector implements DiscoverySelector {
 	private Method javaMethod;
 	private final String methodName;
 
-	JavaMethodSelector(String className, String methodName) {
+	MethodSelector(String className, String methodName) {
 		this.className = className;
 		this.methodName = methodName;
 	}
 
-	JavaMethodSelector(Class<?> javaClass, String methodName) {
+	MethodSelector(Class<?> javaClass, String methodName) {
 		this.javaClass = javaClass;
 		this.className = javaClass.getName();
 		this.methodName = methodName;
 	}
 
-	JavaMethodSelector(Class<?> javaClass, Method method) {
+	MethodSelector(Class<?> javaClass, Method method) {
 		this.javaClass = javaClass;
 		this.className = javaClass.getName();
 		this.javaMethod = method;
@@ -73,12 +74,14 @@ public class JavaMethodSelector implements DiscoverySelector {
 	}
 
 	/**
-	 * Get the Java {@link Class} in which the selected {@linkplain #getJavaMethod
-	 * javaMethod} is declared, or a subclass thereof.
+	 * Get the selected Java {@link Class}. It might throw an
+	 * {@link PreconditionViolationException}, if the method selector is used
+	 * for non Java {@link Class}, e.g. spock specifications.
 	 *
+	 * @throws PreconditionViolationException if there is no such Java {@link Class}
 	 * @see #getJavaMethod()
 	 */
-	public Class<?> getJavaClass() {
+	public Class<?> getJavaClass() throws PreconditionViolationException {
 		lazyLoadJavaClassAndMethod();
 		return this.javaClass;
 	}
@@ -91,11 +94,14 @@ public class JavaMethodSelector implements DiscoverySelector {
 	}
 
 	/**
-	 * Get the selected Java {@link Method}.
+	 * Get the selected Java {@link Method}. It might throw an
+	 * {@link PreconditionViolationException}, if the method selector is used
+	 * for non Java {@link Method}, e.g. spock specifications.
 	 *
+	 * @throws PreconditionViolationException if there is no such Java {@link Method}
 	 * @see #getJavaClass()
 	 */
-	public Method getJavaMethod() {
+	public Method getJavaMethod() throws PreconditionViolationException {
 		lazyLoadJavaClassAndMethod();
 		return this.javaMethod;
 	}
@@ -103,14 +109,14 @@ public class JavaMethodSelector implements DiscoverySelector {
 	@Override
 	public String toString() {
 		// @formatter:off
-		return new ToStringBuilder(this)
-				.append("className", this.className)
-				.append("methodName", this.methodName)
-				.toString();
-		// @formatter:on
+        return new ToStringBuilder(this)
+                .append("className", this.className)
+                .append("methodName", this.methodName)
+                .toString();
+        // @formatter:on
 	}
 
-	private void lazyLoadJavaClassAndMethod() {
+	private void lazyLoadJavaClassAndMethod() throws PreconditionViolationException {
 		if (this.javaClass == null) {
 			this.javaClass = ReflectionUtils.loadClass(this.className).orElseThrow(
 				() -> new PreconditionViolationException("Could not load class with name: " + this.className));

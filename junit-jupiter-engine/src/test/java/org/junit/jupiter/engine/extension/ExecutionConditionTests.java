@@ -13,7 +13,7 @@ package org.junit.jupiter.engine.extension;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.engine.Constants.DEACTIVATE_CONDITIONS_PATTERN_PROPERTY_NAME;
-import static org.junit.platform.engine.discovery.DiscoverySelectors.selectJavaClass;
+import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 import static org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.request;
 
 import org.junit.jupiter.api.AfterEach;
@@ -26,6 +26,7 @@ import org.junit.jupiter.engine.AbstractJupiterTestEngineTests;
 import org.junit.jupiter.engine.JupiterTestEngine;
 import org.junit.jupiter.engine.extension.sub.SystemPropertyCondition;
 import org.junit.jupiter.engine.extension.sub.SystemPropertyCondition.SystemProperty;
+import org.junit.platform.engine.discovery.DiscoverySelectors;
 import org.junit.platform.engine.test.event.ExecutionEventRecorder;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
 
@@ -54,7 +55,7 @@ public class ExecutionConditionTests extends AbstractJupiterTestEngineTests {
 	@Test
 	public void conditionWorksOnContainer() {
 		LauncherDiscoveryRequest request = request().selectors(
-			selectJavaClass(TestCaseWithContainerExecutionCondition.class)).build();
+			selectClass(TestCaseWithContainerExecutionCondition.class)).build();
 		ExecutionEventRecorder eventRecorder = executeTests(request);
 
 		assertEquals(1, eventRecorder.getContainerSkippedCount(), "# container skipped");
@@ -64,7 +65,7 @@ public class ExecutionConditionTests extends AbstractJupiterTestEngineTests {
 	@Test
 	public void conditionWorksOnTest() {
 		LauncherDiscoveryRequest request = request().selectors(
-			selectJavaClass(TestCaseWithTestExecutionCondition.class)).build();
+			selectClass(TestCaseWithTestExecutionCondition.class)).build();
 		ExecutionEventRecorder eventRecorder = executeTests(request);
 
 		assertEquals(2, eventRecorder.getTestStartedCount(), "# tests started");
@@ -115,7 +116,7 @@ public class ExecutionConditionTests extends AbstractJupiterTestEngineTests {
 			int testFailedCount) {
 		// @formatter:off
 		LauncherDiscoveryRequest request = request()
-				.selectors(selectJavaClass(TestCaseWithContainerExecutionCondition.class))
+				.selectors(selectClass(TestCaseWithContainerExecutionCondition.class))
 				.configurationParameter(DEACTIVATE_CONDITIONS_PATTERN_PROPERTY_NAME, deactivatePattern)
 				.build();
 		// @formatter:on
@@ -132,7 +133,7 @@ public class ExecutionConditionTests extends AbstractJupiterTestEngineTests {
 			int failed) {
 		// @formatter:off
 		LauncherDiscoveryRequest request = request()
-				.selectors(selectJavaClass(TestCaseWithTestExecutionCondition.class))
+				.selectors(selectClass(TestCaseWithTestExecutionCondition.class))
 				.configurationParameter(DEACTIVATE_CONDITIONS_PATTERN_PROPERTY_NAME, deactivatePattern)
 				.build();
 		// @formatter:on

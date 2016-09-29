@@ -20,13 +20,14 @@ import org.junit.platform.commons.util.PreconditionViolationException;
 import org.junit.platform.commons.util.Preconditions;
 import org.junit.platform.commons.util.ReflectionUtils;
 import org.junit.platform.commons.util.ToStringBuilder;
+import org.junit.platform.engine.discovery.ClassSelector;
 
 /**
  * Java class based {@link org.junit.platform.engine.TestSource} with an optional
  * {@linkplain FilePosition position}.
  *
  * @since 1.0
- * @see org.junit.platform.engine.discovery.JavaClassSelector
+ * @see ClassSelector
  */
 @API(Experimental)
 public class JavaClassSource implements JavaSource {

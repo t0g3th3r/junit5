@@ -14,20 +14,13 @@ import static java.util.Collections.singleton;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.platform.commons.util.CollectionUtils.getOnlyElement;
-import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathResource;
-import static org.junit.platform.engine.discovery.DiscoverySelectors.selectDirectory;
-import static org.junit.platform.engine.discovery.DiscoverySelectors.selectFile;
-import static org.junit.platform.engine.discovery.DiscoverySelectors.selectJavaClass;
-import static org.junit.platform.engine.discovery.DiscoverySelectors.selectJavaMethod;
-import static org.junit.platform.engine.discovery.DiscoverySelectors.selectJavaPackage;
-import static org.junit.platform.engine.discovery.DiscoverySelectors.selectUri;
+import static org.junit.platform.engine.discovery.DiscoverySelectors.*;
 
 import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.nio.file.Paths;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.PreconditionViolationException;
 import org.junit.platform.engine.DiscoverySelector;
@@ -146,25 +139,25 @@ public class DiscoverySelectorsTests {
 
 	@Test
 	void selectPackageByName() {
-		JavaPackageSelector selector = selectJavaPackage(getClass().getPackage().getName());
+		PackageSelector selector = selectPackage(getClass().getPackage().getName());
 		assertEquals(getClass().getPackage().getName(), selector.getPackageName());
 	}
 
 	@Test
 	void selectClassByName() {
-		JavaClassSelector selector = selectJavaClass(getClass().getName());
+		ClassSelector selector = selectClass(getClass().getName());
 		assertEquals(getClass(), selector.getJavaClass());
 	}
 
 	@Test
 	void selectMethodByFullyQualifiedName() {
-		JavaMethodSelector selector = selectJavaMethod(fullyQualifiedMethodName);
+		MethodSelector selector = DiscoverySelectors.selectMethod(fullyQualifiedMethodName);
 		assertEquals(fullyQualifiedMethod, selector.getJavaMethod());
 	}
 
 	@Test
 	void selectMethodByFullyQualifiedNameWithParameters() {
-		JavaMethodSelector selector = selectJavaMethod(fullyQualifiedMethodNameWithParameters);
+		MethodSelector selector = DiscoverySelectors.selectMethod(fullyQualifiedMethodNameWithParameters);
 		assertEquals(fullyQualifiedMethodWithParameters, selector.getJavaMethod());
 	}
 
@@ -174,14 +167,14 @@ public class DiscoverySelectorsTests {
 		// NOTE: although this test currently passes, it may need to be
 		// revised once GitHub issue #516 is addressed.
 
-		JavaMethodSelector selector = selectJavaMethod(fullyQualifiedDefaultMethodName);
+		MethodSelector selector = DiscoverySelectors.selectMethod(fullyQualifiedDefaultMethodName);
 		assertEquals(fullyQualifiedDefaultMethod, selector.getJavaMethod());
 	}
 
 	@Test
 	void selectMethodWithParametersByMethodReference() throws Exception {
 		Method method = getClass().getDeclaredMethod("myTest", String.class);
-		JavaMethodSelector selector = selectJavaMethod(getClass(), method);
+		MethodSelector selector = selectMethod(getClass(), method);
 		assertEquals(method, selector.getJavaMethod());
 		assertEquals(method, selector.getJavaMethod());
 	}
@@ -189,7 +182,7 @@ public class DiscoverySelectorsTests {
 	@Test
 	void selectClassByNameForSpockSpec() {
 		String spockClassName = "org.example.CalculatorSpec";
-		JavaClassSelector selector = selectJavaClass(spockClassName);
+		ClassSelector selector = selectClass(spockClassName);
 		assertEquals(spockClassName, selector.getClassName());
 	}
 
@@ -198,7 +191,7 @@ public class DiscoverySelectorsTests {
 		String spockClassName = "org.example.CalculatorSpec";
 		String spockMethodName = "#a plus #b equals #c";
 
-		JavaMethodSelector selector = selectJavaMethod(spockClassName, spockMethodName);
+		MethodSelector selector = DiscoverySelectors.selectMethod(spockClassName, spockMethodName);
 		assertEquals(spockClassName, selector.getClassName());
 		assertEquals(spockMethodName, selector.getMethodName());
 	}
@@ -209,7 +202,7 @@ public class DiscoverySelectorsTests {
 		String spockMethodName = "#a plus #b equals #c";
 		String spockFullyQualifiedMethodName = spockClassName + "#" + spockMethodName;
 
-		JavaMethodSelector selector = selectJavaMethod(spockFullyQualifiedMethodName);
+		MethodSelector selector = selectMethod(spockFullyQualifiedMethodName);
 		assertEquals(spockClassName, selector.getClassName());
 		assertEquals(spockMethodName, selector.getMethodName());
 	}
@@ -217,23 +210,22 @@ public class DiscoverySelectorsTests {
 	@Test
 	@SuppressWarnings("deprecation")
 	void selectNamesWithPackageName() {
-		DiscoverySelector selector = getOnlyElement(DiscoverySelectors.selectNames(singleton("org.junit.platform")));
-		assertEquals(JavaPackageSelector.class, selector.getClass());
+		DiscoverySelector selector = getOnlyElement(selectNames(singleton("org.junit.platform")));
+		assertEquals(PackageSelector.class, selector.getClass());
 	}
 
 	@Test
 	@SuppressWarnings("deprecation")
 	void selectNameWithClassName() {
-		DiscoverySelector selector = getOnlyElement(DiscoverySelectors.selectNames(singleton(getClass().getName())));
-		assertEquals(JavaClassSelector.class, selector.getClass());
+		DiscoverySelector selector = getOnlyElement(selectNames(singleton(getClass().getName())));
+		assertEquals(ClassSelector.class, selector.getClass());
 	}
 
 	@Test
 	@SuppressWarnings("deprecation")
 	void selectNameWithMethodName() {
-		DiscoverySelector selector = getOnlyElement(
-			DiscoverySelectors.selectNames(singleton(fullyQualifiedMethodName)));
-		assertEquals(JavaMethodSelector.class, selector.getClass());
+		DiscoverySelector selector = getOnlyElement(selectNames(singleton(fullyQualifiedMethodName)));
+		assertEquals(MethodSelector.class, selector.getClass());
 	}
 
 	private static String fullyQualifiedMethodName() {

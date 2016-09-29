@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.platform.engine.discovery.DiscoverySelectors.selectJavaClass;
+import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 import static org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder.request;
 
 import java.util.ArrayList;
@@ -32,6 +32,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.TestExtensionContext;
 import org.junit.jupiter.engine.AbstractJupiterTestEngineTests;
 import org.junit.jupiter.engine.JupiterTestEngine;
+import org.junit.platform.engine.discovery.DiscoverySelectors;
 import org.junit.platform.engine.test.event.ExecutionEventRecorder;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
 
@@ -57,7 +58,7 @@ public class BeforeAndAfterTestExecutionCallbackTests extends AbstractJupiterTes
 
 	@Test
 	public void beforeAndAfterTestExecutionCallbacks() {
-		LauncherDiscoveryRequest request = request().selectors(selectJavaClass(OuterTestCase.class)).build();
+		LauncherDiscoveryRequest request = request().selectors(selectClass(OuterTestCase.class)).build();
 
 		ExecutionEventRecorder eventRecorder = executeTests(request);
 
@@ -98,7 +99,7 @@ public class BeforeAndAfterTestExecutionCallbackTests extends AbstractJupiterTes
 
 	@Test
 	public void beforeAndAfterTestExecutionCallbacksDeclaredOnSuperclassAndSubclass() {
-		LauncherDiscoveryRequest request = request().selectors(selectJavaClass(ChildTestCase.class)).build();
+		LauncherDiscoveryRequest request = request().selectors(selectClass(ChildTestCase.class)).build();
 
 		ExecutionEventRecorder eventRecorder = executeTests(request);
 
@@ -121,7 +122,7 @@ public class BeforeAndAfterTestExecutionCallbackTests extends AbstractJupiterTes
 
 	@Test
 	public void beforeAndAfterTestExecutionCallbacksDeclaredOnInterfaceAndClass() {
-		LauncherDiscoveryRequest request = request().selectors(selectJavaClass(TestInterfaceTestCase.class)).build();
+		LauncherDiscoveryRequest request = request().selectors(selectClass(TestInterfaceTestCase.class)).build();
 
 		ExecutionEventRecorder eventRecorder = executeTests(request);
 
@@ -155,7 +156,7 @@ public class BeforeAndAfterTestExecutionCallbackTests extends AbstractJupiterTes
 	@Test
 	public void beforeEachMethodThrowsAnException() {
 		LauncherDiscoveryRequest request = request().selectors(
-			selectJavaClass(ExceptionInBeforeEachMethodTestCase.class)).build();
+			selectClass(ExceptionInBeforeEachMethodTestCase.class)).build();
 
 		ExecutionEventRecorder eventRecorder = executeTests(request);
 
@@ -182,7 +183,7 @@ public class BeforeAndAfterTestExecutionCallbackTests extends AbstractJupiterTes
 	@Test
 	public void beforeTestExecutionCallbackThrowsAnException() {
 		LauncherDiscoveryRequest request = request().selectors(
-			selectJavaClass(ExceptionInBeforeTestExecutionCallbackTestCase.class)).build();
+			selectClass(ExceptionInBeforeTestExecutionCallbackTestCase.class)).build();
 
 		ExecutionEventRecorder eventRecorder = executeTests(request);
 
@@ -213,7 +214,7 @@ public class BeforeAndAfterTestExecutionCallbackTests extends AbstractJupiterTes
 	@Test
 	public void afterTestExecutionCallbackThrowsAnException() {
 		LauncherDiscoveryRequest request = request().selectors(
-			selectJavaClass(ExceptionInAfterTestExecutionCallbackTestCase.class)).build();
+			selectClass(ExceptionInAfterTestExecutionCallbackTestCase.class)).build();
 
 		ExecutionEventRecorder eventRecorder = executeTests(request);
 
@@ -244,7 +245,7 @@ public class BeforeAndAfterTestExecutionCallbackTests extends AbstractJupiterTes
 	@Test
 	public void testMethodThrowsAnException() {
 		LauncherDiscoveryRequest request = request().selectors(
-			selectJavaClass(ExceptionInTestMethodTestCase.class)).build();
+			selectClass(ExceptionInTestMethodTestCase.class)).build();
 
 		ExecutionEventRecorder eventRecorder = executeTests(request);
 

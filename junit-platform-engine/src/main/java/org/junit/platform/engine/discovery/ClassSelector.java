@@ -23,7 +23,7 @@ import org.junit.platform.engine.DiscoverySelector;
  * {@link org.junit.platform.engine.TestEngine TestEngines} can discover
  * tests or containers based on classes.
  *
- * If a java {@link Class} is provided, the selector will return this
+ * If a Java {@link Class} is provided, the selector will return this
  * {@link Class} and its class name accordingly. If the selector was
  * created with a {@link Class} name, it will tries to lazy load the
  * {@link Class} only on request.
@@ -32,16 +32,16 @@ import org.junit.platform.engine.DiscoverySelector;
  * @see org.junit.platform.engine.support.descriptor.JavaClassSource
  */
 @API(Experimental)
-public class JavaClassSelector implements DiscoverySelector {
+public class ClassSelector implements DiscoverySelector {
 
 	private final String className;
 	private Class<?> javaClass;
 
-	JavaClassSelector(String className) {
+	ClassSelector(String className) {
 		this.className = className;
 	}
 
-	JavaClassSelector(Class<?> javaClass) {
+	ClassSelector(Class<?> javaClass) {
 		this.className = javaClass.getName();
 		this.javaClass = javaClass;
 	}
@@ -54,9 +54,13 @@ public class JavaClassSelector implements DiscoverySelector {
 	}
 
 	/**
-	 * Get the selected Java {@link Class}.
+	 * Get the selected Java {@link Class}. It might throw an
+	 * {@link PreconditionViolationException}, if the method selector is used
+	 * for non Java {@link Class}, e.g. spock specifications.
+	 *
+	 * @throws PreconditionViolationException if there is no such Java {@link Class}
 	 */
-	public Class<?> getJavaClass() {
+	public Class<?> getJavaClass() throws PreconditionViolationException {
 		if (this.javaClass == null) {
 			this.javaClass = ReflectionUtils.loadClass(this.className).orElseThrow(
 				() -> new PreconditionViolationException("Could not load class with name: " + this.className));

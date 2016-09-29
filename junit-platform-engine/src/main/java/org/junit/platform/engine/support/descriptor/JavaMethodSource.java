@@ -22,15 +22,16 @@ import java.util.Objects;
 import org.junit.platform.commons.meta.API;
 import org.junit.platform.commons.util.Preconditions;
 import org.junit.platform.commons.util.ToStringBuilder;
+import org.junit.platform.engine.discovery.MethodSelector;
 
 /**
- * Java method based {@link org.junit.platform.engine.TestSource}.
+ * Method based {@link org.junit.platform.engine.TestSource}.
  *
  * <p>This class stores the method name along with its parameter types because
  * {@link Method} does not implement {@link java.io.Serializable}.
  *
  * @since 1.0
- * @see org.junit.platform.engine.discovery.JavaMethodSelector
+ * @see MethodSelector
  */
 @API(Experimental)
 public class JavaMethodSource implements JavaSource {
