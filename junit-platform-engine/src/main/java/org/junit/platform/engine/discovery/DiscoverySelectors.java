@@ -25,6 +25,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.junit.platform.commons.meta.API;
 import org.junit.platform.commons.util.PreconditionViolationException;
@@ -46,6 +48,8 @@ import org.junit.platform.engine.UniqueId;
  */
 @API(Experimental)
 public final class DiscoverySelectors {
+
+	private static Pattern fullyQualifiedMethodNamePattern = Pattern.compile("([^#]+)#(.+)");
 
 	///CLOVER:OFF
 	private DiscoverySelectors() {
@@ -264,8 +268,8 @@ public final class DiscoverySelectors {
 	 * <p>The following formats are supported.
 	 *
 	 * <ul>
-	 * <li>{@code [fully qualified class methodName]#[methodName]}</li>
-	 * <li>{@code [fully qualified class methodName]#[methodName](parameter type list)}
+	 * <li>{@code [fully qualified class]#[methodName]}</li>
+	 * <li>{@code [fully qualified class]#[methodName](parameter type list)}
 	 * <ul><li>The <em>parameter type list</em> is a comma-separated list of
 	 * fully qualified class names for the types of parameters accepted by
 	 * the method.</li></ul>
@@ -290,7 +294,11 @@ public final class DiscoverySelectors {
 	 */
 	public static JavaMethodSelector selectJavaMethod(String methodName) throws PreconditionViolationException {
 		Preconditions.notBlank(methodName, "Method name must not be null or blank");
-		return new JavaMethodSelector(methodName);
+
+		Matcher matcher = fullyQualifiedMethodNamePattern.matcher(methodName);
+		Preconditions.condition(matcher.matches(), "Method name is not a valid full qualified method name");
+
+		return selectJavaMethod(matcher.group(1), matcher.group(2));
 	}
 
 	/**
