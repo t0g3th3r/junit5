@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.platform.commons.util.CollectionUtils.getOnlyElement;
 import static org.junit.platform.commons.util.FunctionUtils.where;
-import static org.junit.platform.engine.discovery.ClassNameFilter.includeClassNamePattern;
+import static org.junit.platform.engine.discovery.ClassNameFilter.includeClassNamePatterns;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClasspathRoots;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectJavaClass;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectJavaMethod;
@@ -40,6 +40,7 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.platform.commons.util.StringUtils;
 import org.junit.platform.engine.TestDescriptor;
 import org.junit.platform.engine.TestTag;
 import org.junit.platform.engine.UniqueId;
@@ -229,7 +230,7 @@ class VintageTestEngineDiscoveryTests {
 		Path root = getClasspathRoot(PlainJUnit4TestCaseWithSingleTestWhichFails.class);
 
 		LauncherDiscoveryRequest discoveryRequest = request().selectors(selectClasspathRoots(singleton(root))).filters(
-			includeClassNamePattern(".*JUnit4.*"), includeClassNamePattern(".*Plain.*")).build();
+			includeClassNamePatterns(".*JUnit4.*"), includeClassNamePatterns(".*Plain.*")).build();
 
 		TestDescriptor engineDescriptor = discoverTests(discoveryRequest);
 
@@ -528,7 +529,7 @@ class VintageTestEngineDiscoveryTests {
 		// @formatter:off
 		LauncherDiscoveryRequest request = request()
 				.selectors(selectJavaMethod(testClass, testClass.getMethod("failingTest")))
-				.filters(includeClassNamePattern("Foo"))
+				.filters(includeClassNamePatterns("Foo"))
 				.build();
 		// @formatter:on
 
@@ -676,9 +677,10 @@ class VintageTestEngineDiscoveryTests {
 	private static void assertMethodSource(Method expectedMethod, TestDescriptor testDescriptor) {
 		assertThat(testDescriptor.getSource()).containsInstanceOf(JavaMethodSource.class);
 		JavaMethodSource methodSource = (JavaMethodSource) testDescriptor.getSource().get();
-		assertThat(methodSource.getJavaClass()).isEqualTo(expectedMethod.getDeclaringClass());
-		assertThat(methodSource.getJavaMethodName()).isEqualTo(expectedMethod.getName());
-		assertThat(methodSource.getJavaMethodParameterTypes()).containsExactly(expectedMethod.getParameterTypes());
+		assertThat(methodSource.getClassName()).isEqualTo(expectedMethod.getDeclaringClass().getName());
+		assertThat(methodSource.getMethodName()).isEqualTo(expectedMethod.getName());
+		assertThat(methodSource.getMethodParameterTypes()).isEqualTo(
+			StringUtils.nullSafeToString(expectedMethod.getParameterTypes()));
 	}
 
 	private static LauncherDiscoveryRequest discoveryRequestForClass(Class<?> testClass) {

@@ -60,6 +60,11 @@ on GitHub.
 * The `-C`, `-D`, and `-r` short command-line options for the `ConsoleLauncher` have been
   removed in favor of using their _long_ equivalents `--disable-ansi-colors`,
   `--hide-details`, and `--reports-dir` respectively.
+* `LauncherDiscoveryRequestBuilder` no longer accepts `null` values for `selectors`, `filters`,
+  or maps of configuration parameters.
+* `ClassNameFilter.includeClassNamePattern` is now deprecated in favor of
+  `ClassNameFilter.includeClassNamePatterns`.
+
 
 ====== New Features
 
@@ -82,6 +87,11 @@ on GitHub.
 * The `{ConsoleLauncher}`, the Gradle plugin, and the `{JUnitPlatform-Runner}` runner now use
   `{standard-include-class-name-pattern}` as the default pattern for class names to be included
   in the test run.
+* New `@Testable` annotation that `TestEngine` implementations can use to signal to IDEs
+  and tooling vendors that the annotated or meta-annotated element is _testable_ (i.e.
+  that it can be executed as a test on the JUnit Platform).
+* Multiple regular expressions that are combined using OR semantics can now be passed to
+  `ClassNameFilter.includeClassNamePatterns`.
 
 
 [[release-notes-5.0.0-m3-junit-jupiter]]
@@ -94,6 +104,8 @@ on GitHub.
 * `DynamicTest.stream()` now accepts a `ThrowingConsumer` instead of a conventional
   `Consumer` for its _test executor_, thereby allowing for custom streams of
   dynamic tests that may potentially throw checked exceptions.
+* Extensions registered at the test method level are now used when invoking
+  `@BeforeEach` and `@AfterEach` methods for the corresponding test method.
 * The `JupiterTestEngine` now supports selection of test methods via their unique ID for
   methods that accept arrays or primitive types as parameters.
 * `ExtensionContext.Store` is now thread-safe.
@@ -102,14 +114,16 @@ on GitHub.
 
 * The `Executable` functional interface has been relocated to a new dedicated
   `org.junit.jupiter.api.function` package.
+* `Assertions.expectThrows()` has been deprecated in favor of `Assertions.assertThrows()`.
 
-====== New Features
+====== New Features and Improvements
 
 * Support for lazy and preemptive _timeouts_ with lambda expressions in `Assertions`. See
   examples in <<writing-tests-assertions,`AssertionsDemo`>> and consult the
   `{Assertions}` Javadoc for further details.
 * New variants of `Assertions.assertAll()` that accept streams of executables (i.e.,
   `Stream<Executable>`).
+* `Assertions.assertThrows()` now returns the thrown exception.
 
 
 [[release-notes-5.0.0-m3-junit-vintage]]

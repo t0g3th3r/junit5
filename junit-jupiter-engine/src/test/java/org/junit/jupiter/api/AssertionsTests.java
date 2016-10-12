@@ -15,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
@@ -24,13 +25,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTimeout;
 import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.expectThrows;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.IterableFactory.listOf;
+import static org.junit.jupiter.api.IterableFactory.setOf;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -578,31 +581,31 @@ public class AssertionsTests {
 
 	@Test
 	void assertEqualsFloatWithIllegalDelta() {
-		AssertionFailedError e1 = expectThrows(AssertionFailedError.class, () -> assertEquals(0.1f, 0.2f, -0.9f));
+		AssertionFailedError e1 = assertThrows(AssertionFailedError.class, () -> assertEquals(0.1f, 0.2f, -0.9f));
 		assertMessageEndsWith(e1, "positive delta expected but was: <-0.9>");
 
-		AssertionFailedError e2 = expectThrows(AssertionFailedError.class, () -> assertEquals(.0f, .0f, -10.5f));
+		AssertionFailedError e2 = assertThrows(AssertionFailedError.class, () -> assertEquals(.0f, .0f, -10.5f));
 		assertMessageEndsWith(e2, "positive delta expected but was: <-10.5>");
 
-		AssertionFailedError e3 = expectThrows(AssertionFailedError.class, () -> assertEquals(4.5f, 4.6f, Float.NaN));
+		AssertionFailedError e3 = assertThrows(AssertionFailedError.class, () -> assertEquals(4.5f, 4.6f, Float.NaN));
 		assertMessageEndsWith(e3, "positive delta expected but was: <NaN>");
 	}
 
 	@Test
 	void assertEqualsFloatWithDeltaWithUnequalValues() {
-		AssertionFailedError e1 = expectThrows(AssertionFailedError.class, () -> assertEquals(0.5f, 0.2f, 0.2f));
+		AssertionFailedError e1 = assertThrows(AssertionFailedError.class, () -> assertEquals(0.5f, 0.2f, 0.2f));
 		assertMessageEndsWith(e1, "expected: <0.5> but was: <0.2>");
 
-		AssertionFailedError e2 = expectThrows(AssertionFailedError.class, () -> assertEquals(0.1f, 0.2f, 0.000001f));
+		AssertionFailedError e2 = assertThrows(AssertionFailedError.class, () -> assertEquals(0.1f, 0.2f, 0.000001f));
 		assertMessageEndsWith(e2, "expected: <0.1> but was: <0.2>");
 
-		AssertionFailedError e3 = expectThrows(AssertionFailedError.class, () -> assertEquals(100.0f, 50.0f, 10.0f));
+		AssertionFailedError e3 = assertThrows(AssertionFailedError.class, () -> assertEquals(100.0f, 50.0f, 10.0f));
 		assertMessageEndsWith(e3, "expected: <100.0> but was: <50.0>");
 
-		AssertionFailedError e4 = expectThrows(AssertionFailedError.class, () -> assertEquals(-3.5f, -3.3f, 0.01f));
+		AssertionFailedError e4 = assertThrows(AssertionFailedError.class, () -> assertEquals(-3.5f, -3.3f, 0.01f));
 		assertMessageEndsWith(e4, "expected: <-3.5> but was: <-3.3>");
 
-		AssertionFailedError e5 = expectThrows(AssertionFailedError.class, () -> assertEquals(+0.0f, -0.001f, .00001f));
+		AssertionFailedError e5 = assertThrows(AssertionFailedError.class, () -> assertEquals(+0.0f, -0.001f, .00001f));
 		assertMessageEndsWith(e5, "expected: <0.0> but was: <-0.001>");
 	}
 
@@ -610,7 +613,7 @@ public class AssertionsTests {
 	void assertEqualsFloatWithDeltaWithUnequalValuesAndMessage() {
 		Executable assertion = () -> assertEquals(0.5f, 0.45f, 0.03f, "message");
 
-		AssertionFailedError e = expectThrows(AssertionFailedError.class, assertion);
+		AssertionFailedError e = assertThrows(AssertionFailedError.class, assertion);
 
 		assertMessageStartsWith(e, "message");
 		assertMessageEndsWith(e, "expected: <0.5> but was: <0.45>");
@@ -621,7 +624,7 @@ public class AssertionsTests {
 	void assertEqualsFloatWithDeltaWithUnequalValuesAndMessageSupplier() {
 		Executable assertion = () -> assertEquals(0.5f, 0.45f, 0.03f, () -> "message");
 
-		AssertionFailedError e = expectThrows(AssertionFailedError.class, assertion);
+		AssertionFailedError e = assertThrows(AssertionFailedError.class, assertion);
 
 		assertMessageStartsWith(e, "message");
 		assertMessageEndsWith(e, "expected: <0.5> but was: <0.45>");
@@ -686,35 +689,35 @@ public class AssertionsTests {
 
 	@Test
 	void assertEqualsDoubleWithIllegalDelta() {
-		AssertionFailedError e1 = expectThrows(AssertionFailedError.class, () -> assertEquals(1.1d, 1.11d, -0.5d));
+		AssertionFailedError e1 = assertThrows(AssertionFailedError.class, () -> assertEquals(1.1d, 1.11d, -0.5d));
 		assertMessageEndsWith(e1, "positive delta expected but was: <-0.5>");
 
-		AssertionFailedError e2 = expectThrows(AssertionFailedError.class, () -> assertEquals(.55d, .56d, -10.5d));
+		AssertionFailedError e2 = assertThrows(AssertionFailedError.class, () -> assertEquals(.55d, .56d, -10.5d));
 		assertMessageEndsWith(e2, "positive delta expected but was: <-10.5>");
 
-		AssertionFailedError e3 = expectThrows(AssertionFailedError.class, () -> assertEquals(1.1d, 1.1d, Double.NaN));
+		AssertionFailedError e3 = assertThrows(AssertionFailedError.class, () -> assertEquals(1.1d, 1.1d, Double.NaN));
 		assertMessageEndsWith(e3, "positive delta expected but was: <NaN>");
 	}
 
 	@Test
 	void assertEqualsDoubleWithDeltaWithUnequalValues() {
-		AssertionFailedError e1 = expectThrows(AssertionFailedError.class, () -> assertEquals(9.9d, 9.7d, 0.1d));
+		AssertionFailedError e1 = assertThrows(AssertionFailedError.class, () -> assertEquals(9.9d, 9.7d, 0.1d));
 		assertMessageEndsWith(e1, "expected: <9.9> but was: <9.7>");
 		assertExpectedAndActualValues(e1, 9.9d, 9.7d);
 
-		AssertionFailedError e2 = expectThrows(AssertionFailedError.class, () -> assertEquals(0.1d, 0.05d, 0.001d));
+		AssertionFailedError e2 = assertThrows(AssertionFailedError.class, () -> assertEquals(0.1d, 0.05d, 0.001d));
 		assertMessageEndsWith(e2, "expected: <0.1> but was: <0.05>");
 		assertExpectedAndActualValues(e2, 0.1d, 0.05d);
 
-		AssertionFailedError e3 = expectThrows(AssertionFailedError.class, () -> assertEquals(17.11d, 15.11d, 1.1d));
+		AssertionFailedError e3 = assertThrows(AssertionFailedError.class, () -> assertEquals(17.11d, 15.11d, 1.1d));
 		assertMessageEndsWith(e3, "expected: <17.11> but was: <15.11>");
 		assertExpectedAndActualValues(e3, 17.11d, 15.11d);
 
-		AssertionFailedError e4 = expectThrows(AssertionFailedError.class, () -> assertEquals(-7.2d, -5.9d, 1.1d));
+		AssertionFailedError e4 = assertThrows(AssertionFailedError.class, () -> assertEquals(-7.2d, -5.9d, 1.1d));
 		assertMessageEndsWith(e4, "expected: <-7.2> but was: <-5.9>");
 		assertExpectedAndActualValues(e4, -7.2d, -5.9d);
 
-		AssertionFailedError e5 = expectThrows(AssertionFailedError.class, () -> assertEquals(+0.0d, -0.001d, .00001d));
+		AssertionFailedError e5 = assertThrows(AssertionFailedError.class, () -> assertEquals(+0.0d, -0.001d, .00001d));
 		assertMessageEndsWith(e5, "expected: <0.0> but was: <-0.001>");
 		assertExpectedAndActualValues(e5, +0.0d, -0.001d);
 	}
@@ -723,7 +726,7 @@ public class AssertionsTests {
 	void assertEqualsDoubleWithDeltaWithUnequalValuesAndMessage() {
 		Executable assertion = () -> assertEquals(42.42d, 42.4d, 0.001d, "message");
 
-		AssertionFailedError e = expectThrows(AssertionFailedError.class, assertion);
+		AssertionFailedError e = assertThrows(AssertionFailedError.class, assertion);
 
 		assertMessageStartsWith(e, "message");
 		assertMessageEndsWith(e, "expected: <42.42> but was: <42.4>");
@@ -734,7 +737,7 @@ public class AssertionsTests {
 	void assertEqualsDoubleWithDeltaWithUnequalValuesAndMessageSupplier() {
 		Executable assertion = () -> assertEquals(0.9d, 10.12d, 5.001d, () -> "message");
 
-		AssertionFailedError e = expectThrows(AssertionFailedError.class, assertion);
+		AssertionFailedError e = assertThrows(AssertionFailedError.class, assertion);
 
 		assertMessageStartsWith(e, "message");
 		assertMessageEndsWith(e, "expected: <0.9> but was: <10.12>");
@@ -2744,6 +2747,415 @@ public class AssertionsTests {
 		}
 	}
 
+	// --- assertIterableEquals --------------------------------------------
+
+	@Test
+	void assertIterableEqualsEqualToSelf() {
+		List<Object> list = listOf("a", 'b', 1, 2);
+		assertIterableEquals(list, list);
+
+		Set<Object> set = setOf("a", 'b', 1, 2);
+		assertIterableEquals(set, set);
+	}
+
+	@Test
+	void assertIterableEqualsEqualObjectsOfSameType() {
+		assertIterableEquals(listOf(), listOf());
+		assertIterableEquals(listOf("abc"), listOf("abc"));
+		assertIterableEquals(listOf("abc", 1, 2L, 3D), listOf("abc", 1, 2L, 3D));
+		assertIterableEquals(setOf(), setOf());
+		assertIterableEquals(setOf("abc"), setOf("abc"));
+		assertIterableEquals(setOf("abc", 1, 2L, 3D), setOf("abc", 1, 2L, 3D));
+	}
+
+	@Test
+	void assertIterableEqualsNestedIterables() {
+		assertIterableEquals(listOf(listOf(listOf())), listOf(listOf(listOf())));
+		assertIterableEquals(setOf(setOf(setOf())), setOf(setOf(setOf())));
+	}
+
+	@Test
+	void assertIterableEqualsNestedIterablesWithNull() {
+		assertIterableEquals(listOf(null, listOf(null, listOf(null, null)), null, listOf((List<Object>) null)),
+			listOf(null, listOf(null, listOf(null, null)), null, listOf((List<Object>) null)));
+		assertIterableEquals(setOf(null, setOf(null, setOf(null, null)), null, setOf((Set<Object>) null)),
+			setOf(null, setOf(null, setOf(null, null)), null, setOf((Set<Object>) null)));
+	}
+
+	@Test
+	void assertIterableEqualsNestedIterablesWithStrings() {
+		assertIterableEquals(listOf("a", listOf(listOf("b", listOf("c", "d"))), "e"),
+			listOf("a", listOf(listOf("b", listOf("c", "d"))), "e"));
+		assertIterableEquals(setOf("a", setOf(setOf("b", setOf("c", "d"))), "e"),
+			setOf("a", setOf(setOf("b", setOf("c", "d"))), "e"));
+	}
+
+	@Test
+	void assertIterableEqualsNestedIterablesWithIntegers() {
+		assertIterableEquals(listOf(listOf(1), listOf(2), listOf(listOf(3, listOf(4)))),
+			listOf(listOf(1), listOf(2), listOf(listOf(3, listOf(4)))));
+		assertIterableEquals(setOf(setOf(1), setOf(2), setOf(setOf(3, setOf(4)))),
+			setOf(setOf(1), setOf(2), setOf(setOf(3, setOf(4)))));
+	}
+
+	@Test
+	void assertIterableEqualsNestedIterablesWithDeeplyNestedObject() {
+		assertIterableEquals(listOf(listOf(listOf(listOf(listOf(listOf(listOf("abc"))))))),
+			listOf(listOf(listOf(listOf(listOf(listOf(listOf("abc"))))))));
+		assertIterableEquals(setOf(setOf(setOf(setOf(setOf(setOf(setOf("abc"))))))),
+			setOf(setOf(setOf(setOf(setOf(setOf(setOf("abc"))))))));
+	}
+
+	@Test
+	void assertIterableEqualsNestedIterablesWithNaN() {
+		assertIterableEquals(listOf(null, listOf(null, Double.NaN, listOf(Float.NaN, null, listOf()))),
+			listOf(null, listOf(null, Double.NaN, listOf(Float.NaN, null, listOf()))));
+		assertIterableEquals(setOf(null, setOf(null, Double.NaN, setOf(Float.NaN, null, setOf()))),
+			setOf(null, setOf(null, Double.NaN, setOf(Float.NaN, null, setOf()))));
+	}
+
+	@Test
+	void assertIterableEqualsNestedIterablesWithObjectsOfDifferentTypes() {
+		assertIterableEquals(listOf(new String("a"), Integer.valueOf(1), listOf(Double.parseDouble("1.1"), "b")),
+			listOf(new String("a"), Integer.valueOf(1), listOf(Double.parseDouble("1.1"), "b")));
+		assertIterableEquals(setOf(new String("a"), Integer.valueOf(1), setOf(Double.parseDouble("1.1"), "b")),
+			setOf(new String("a"), Integer.valueOf(1), setOf(Double.parseDouble("1.1"), "b")));
+	}
+
+	@Test
+	void assertIterableEqualsNestedIterablesOfMixedSubtypes() {
+		assertIterableEquals(
+			listOf(1, 2, listOf(3, setOf(4, 5), setOf(6L), listOf(listOf(setOf(7)))), setOf(8), listOf(setOf(9L))),
+			listOf(1, 2, listOf(3, setOf(4, 5), setOf(6L), listOf(listOf(setOf(7)))), setOf(8), listOf(setOf(9L))));
+
+		assertIterableEquals(
+			listOf("a", setOf('b', 'c'), setOf((int) 'd'), listOf(listOf(listOf("ef"), listOf(listOf("ghi"))))),
+			setOf("a", listOf('b', 'c'), listOf((int) 'd'), setOf(setOf(setOf("ef"), setOf(setOf("ghi"))))));
+	}
+
+	@Test
+	void assertIterableEqualsIterableVsNull() {
+		try {
+			assertIterableEquals(null, listOf("a", "b", 1, listOf()));
+			expectAssertionFailedError();
+		}
+		catch (AssertionFailedError ex) {
+			assertMessageEquals(ex, "expected iterable was <null>");
+		}
+
+		try {
+			assertIterableEquals(listOf('a', 1, new Object(), 10L), null);
+			expectAssertionFailedError();
+		}
+		catch (AssertionFailedError ex) {
+			assertMessageEquals(ex, "actual iterable was <null>");
+		}
+	}
+
+	@Test
+	void assertIterableEqualsNestedIterableVsNull() {
+		try {
+			assertIterableEquals(listOf(listOf(), 1, "2", setOf('3', listOf((List<Object>) null))),
+				listOf(listOf(), 1, "2", setOf('3', listOf(listOf("4")))));
+			expectAssertionFailedError();
+		}
+		catch (AssertionFailedError ex) {
+			assertMessageEquals(ex, "expected iterable was <null> at index [3][1][0]");
+		}
+
+		try {
+			assertIterableEquals(setOf(1, 2, listOf(3, listOf("4", setOf(5, setOf(6)))), "7"),
+				setOf(1, 2, listOf(3, listOf("4", setOf(5, null))), "7"));
+			expectAssertionFailedError();
+		}
+		catch (AssertionFailedError ex) {
+			assertMessageEquals(ex, "actual iterable was <null> at index [2][1][1][1]");
+		}
+	}
+
+	@Test
+	void assertIterableEqualsIterableVsNullAndMessage() {
+		try {
+			assertIterableEquals(null, listOf('a', "b", 10, 20D), "message");
+			expectAssertionFailedError();
+		}
+		catch (AssertionFailedError ex) {
+			assertMessageStartsWith(ex, "message");
+			assertMessageEndsWith(ex, "expected iterable was <null>");
+		}
+
+		try {
+			assertIterableEquals(listOf("hello", 42), null, "message");
+			expectAssertionFailedError();
+		}
+		catch (AssertionFailedError ex) {
+			assertMessageStartsWith(ex, "message");
+			assertMessageEndsWith(ex, "actual iterable was <null>");
+		}
+	}
+
+	@Test
+	void assertIterableEqualsNestedIterableVsNullAndMessage() {
+		try {
+			assertIterableEquals(listOf(1, listOf(2, 3, listOf(4, 5, listOf((List<Object>) null)))),
+				listOf(1, listOf(2, 3, listOf(4, 5, listOf(listOf(6))))), "message");
+			expectAssertionFailedError();
+		}
+		catch (AssertionFailedError ex) {
+			assertMessageStartsWith(ex, "message");
+			assertMessageEndsWith(ex, "expected iterable was <null> at index [1][2][2][0]");
+		}
+
+		try {
+			assertIterableEquals(listOf(1, listOf(2, listOf(3, listOf(listOf(4))))),
+				listOf(1, listOf(2, listOf(3, listOf((List<Object>) null)))), "message");
+			expectAssertionFailedError();
+		}
+		catch (AssertionFailedError ex) {
+			assertMessageStartsWith(ex, "message");
+			assertMessageEndsWith(ex, "actual iterable was <null> at index [1][1][1][0]");
+		}
+	}
+
+	@Test
+	void assertIterableEqualsIterableVsNullAndMessageSupplier() {
+		try {
+			assertIterableEquals(null, setOf(42, "42", listOf(42F), 42D), () -> "message");
+			expectAssertionFailedError();
+		}
+		catch (AssertionFailedError ex) {
+			assertMessageStartsWith(ex, "message");
+			assertMessageEndsWith(ex, "expected iterable was <null>");
+		}
+
+		try {
+			assertIterableEquals(listOf(listOf("a"), listOf()), null, () -> "message");
+			expectAssertionFailedError();
+		}
+		catch (AssertionFailedError ex) {
+			assertMessageStartsWith(ex, "message");
+			assertMessageEndsWith(ex, "actual iterable was <null>");
+		}
+	}
+
+	@Test
+	void assertIterableEqualsNestedIterableVsNullAndMessageSupplier() {
+		try {
+			assertIterableEquals(listOf("1", "2", "3", listOf("4", listOf((List<Object>) null))),
+				listOf("1", "2", "3", listOf("4", listOf(listOf(5)))), () -> "message");
+			expectAssertionFailedError();
+		}
+		catch (AssertionFailedError ex) {
+			assertMessageStartsWith(ex, "message");
+			assertMessageEndsWith(ex, "expected iterable was <null> at index [3][1][0]");
+		}
+
+		try {
+			assertIterableEquals(setOf(1, 2, setOf("3", setOf('4', setOf(5, 6, setOf())))),
+				setOf(1, 2, setOf("3", setOf('4', setOf(5, 6, null)))), () -> "message");
+			expectAssertionFailedError();
+		}
+		catch (AssertionFailedError ex) {
+			assertMessageStartsWith(ex, "message");
+			assertMessageEndsWith(ex, "actual iterable was <null> at index [2][1][1][2]");
+		}
+	}
+
+	@Test
+	void assertIterableEqualsIterablesOfDifferentLength() {
+		try {
+			assertIterableEquals(listOf('a', "b", 'c'), listOf('a', "b", 'c', 1));
+			expectAssertionFailedError();
+		}
+		catch (AssertionFailedError ex) {
+			assertMessageEquals(ex, "iterable lengths differ, expected: <3> but was: <4>");
+		}
+	}
+
+	@Test
+	void assertIterableEqualsNestedIterablesOfDifferentLength() {
+		try {
+			assertIterableEquals(listOf("a", setOf("b", listOf("c", "d", setOf("e", 1, 2, 3)))),
+				listOf("a", setOf("b", listOf("c", "d", setOf("e", 1, 2, 3, 4, 5)))));
+			expectAssertionFailedError();
+		}
+		catch (AssertionFailedError ex) {
+			assertMessageEquals(ex, "iterable lengths differ at index [1][1][2], expected: <4> but was: <6>");
+		}
+
+		try {
+			assertIterableEquals(listOf(listOf(listOf(listOf(listOf(listOf(listOf('a'))))))),
+				listOf(listOf(listOf(listOf(listOf(listOf(listOf('a', 'b'))))))));
+			expectAssertionFailedError();
+		}
+		catch (AssertionFailedError ex) {
+			assertMessageEquals(ex, "iterable lengths differ at index [0][0][0][0][0][0], expected: <1> but was: <2>");
+		}
+	}
+
+	@Test
+	void assertIterableEqualsIterablesOfDifferentLengthAndMessage() {
+		try {
+			assertIterableEquals(setOf('a', 1), setOf('a', 1, new Object()), "message");
+			expectAssertionFailedError();
+		}
+		catch (AssertionFailedError ex) {
+			assertMessageStartsWith(ex, "message");
+			assertMessageEndsWith(ex, "iterable lengths differ, expected: <2> but was: <3>");
+		}
+	}
+
+	@Test
+	void assertIterableEqualsNestedIterablesOfDifferentLengthAndMessage() {
+		try {
+			assertIterableEquals(listOf('a', 1, listOf(2, 3)), listOf('a', 1, listOf(2, 3, 4, 5)), "message");
+			expectAssertionFailedError();
+		}
+		catch (AssertionFailedError ex) {
+			assertMessageStartsWith(ex, "message");
+			assertMessageEndsWith(ex, "iterable lengths differ at index [2], expected: <2> but was: <4>");
+		}
+	}
+
+	@Test
+	void assertIterableEqualsIterablesOfDifferentLengthAndMessageSupplier() {
+		try {
+			assertIterableEquals(setOf("a", "b", "c"), setOf("a", "b", "c", "d", "e", "f"), () -> "message");
+			expectAssertionFailedError();
+		}
+		catch (AssertionFailedError ex) {
+			assertMessageStartsWith(ex, "message");
+			assertMessageEndsWith(ex, "iterable lengths differ, expected: <3> but was: <6>");
+		}
+	}
+
+	@Test
+	void assertIterableEqualsNestedIterablesOfDifferentLengthAndMessageSupplier() {
+		try {
+			assertIterableEquals(listOf("a", setOf(1, 2, 3, listOf(4.0, 5.1, 6.1), 7)),
+				listOf("a", setOf(1, 2, 3, listOf(4.0, 5.1, 6.1, 7.0), 8)), () -> "message");
+			expectAssertionFailedError();
+		}
+		catch (AssertionFailedError ex) {
+			assertMessageStartsWith(ex, "message");
+			assertMessageEndsWith(ex, "iterable lengths differ at index [1][3], expected: <3> but was: <4>");
+		}
+	}
+
+	@Test
+	void assertIterableEqualsDifferentIterables() {
+		try {
+			assertIterableEquals(listOf(1L, "2", '3', 4, 5D), listOf(1L, "2", '9', 4, 5D));
+			expectAssertionFailedError();
+		}
+		catch (AssertionFailedError ex) {
+			assertMessageEquals(ex, "iterable contents differ at index [2], expected: <3> but was: <9>");
+		}
+
+		try {
+			assertIterableEquals(listOf("a", 10, 11, 12, Double.NaN), listOf("a", 10, 11, 12, 13.55D));
+			expectAssertionFailedError();
+		}
+		catch (AssertionFailedError ex) {
+			assertMessageEquals(ex, "iterable contents differ at index [4], expected: <NaN> but was: <13.55>");
+		}
+	}
+
+	@Test
+	void assertIterableEqualsDifferentNestedIterables() {
+		try {
+			assertIterableEquals(listOf(1, 2, listOf(3, listOf(4, listOf(false, true)))),
+				listOf(1, 2, listOf(3, listOf(4, listOf(true, false)))));
+			expectAssertionFailedError();
+		}
+		catch (AssertionFailedError ex) {
+			assertMessageEquals(ex,
+				"iterable contents differ at index [2][1][1][0], expected: <false> but was: <true>");
+		}
+
+		List<Object> differentElement = listOf();
+		try {
+			assertIterableEquals(listOf(1, 2, 3, listOf(listOf(4, listOf(5)))),
+				listOf(1, 2, 3, listOf(listOf(4, listOf(differentElement)))));
+			expectAssertionFailedError();
+		}
+		catch (AssertionFailedError ex) {
+			assertMessageEquals(ex,
+				"iterable contents differ at index [3][0][1][0], expected: <5> but was: <" + differentElement + ">");
+		}
+	}
+
+	@Test
+	void assertIterableEqualsDifferentIterablesAndMessage() {
+		try {
+			assertIterableEquals(listOf(1.1D, 2L, "3"), listOf(1D, 2L, "3"), "message");
+			expectAssertionFailedError();
+		}
+		catch (AssertionFailedError ex) {
+			assertMessageStartsWith(ex, "message");
+			assertMessageEndsWith(ex, "iterable contents differ at index [0], expected: <1.1> but was: <1.0>");
+		}
+	}
+
+	@Test
+	void assertIterableEqualsDifferentNestedIterablesAndMessage() {
+		try {
+			assertIterableEquals(listOf(9, 8, '6', listOf(5, 4, "3", listOf("2", '1'))),
+				listOf(9, 8, '6', listOf(5, 4, "3", listOf("99", '1'))), "message");
+			expectAssertionFailedError();
+		}
+		catch (AssertionFailedError ex) {
+			assertMessageStartsWith(ex, "message");
+			assertMessageEndsWith(ex, "iterable contents differ at index [3][3][0], expected: <2> but was: <99>");
+		}
+
+		try {
+			assertIterableEquals(listOf(9, 8, '6', listOf(5, 4, "3", listOf("2", "1"))),
+				listOf(9, 8, '6', listOf(5, 4, "3", listOf("99", "1"))), "message");
+			expectAssertionFailedError();
+		}
+		catch (AssertionFailedError ex) {
+			assertMessageStartsWith(ex, "message");
+			assertMessageEndsWith(ex, "iterable contents differ at index [3][3][0], expected: <2> but was: <99>");
+		}
+	}
+
+	@Test
+	void assertIterableEqualsDifferentIterablesAndMessageSupplier() {
+		try {
+			assertIterableEquals(setOf("one", 1L, Double.MIN_VALUE, "abc"), setOf("one", 1L, 42.42, "abc"),
+				() -> "message");
+			expectAssertionFailedError();
+		}
+		catch (AssertionFailedError ex) {
+			assertMessageStartsWith(ex, "message");
+			assertMessageEndsWith(ex, "iterable contents differ at index [2], expected: <4.9E-324> but was: <42.42>");
+		}
+	}
+
+	@Test
+	void assertIterableEqualsDifferentNestedIterablesAndMessageSupplier() {
+		try {
+			assertIterableEquals(setOf("one", 1L, setOf("a", 'b', setOf(1, setOf(2, 3))), "abc"),
+				setOf("one", 1L, setOf("a", 'b', setOf(1, setOf(2, 4))), "abc"), () -> "message");
+			expectAssertionFailedError();
+		}
+		catch (AssertionFailedError ex) {
+			assertMessageStartsWith(ex, "message");
+			assertMessageEndsWith(ex, "iterable contents differ at index [2][2][1][1], expected: <3> but was: <4>");
+		}
+
+		try {
+			assertIterableEquals(listOf("j", listOf("a"), setOf(42), "ab", setOf(1, listOf(3))),
+				listOf("j", listOf("a"), setOf(42), "ab", setOf(1, listOf(5))), () -> "message");
+			expectAssertionFailedError();
+		}
+		catch (AssertionFailedError ex) {
+			assertMessageStartsWith(ex, "message");
+			assertMessageEndsWith(ex, "iterable contents differ at index [4][1][0], expected: <3> but was: <5>");
+		}
+	}
+
 	// --- assertNotEquals -------------------------------------------------
 
 	@Test
@@ -2930,7 +3342,7 @@ public class AssertionsTests {
 			// @formatter:on
 		}
 		catch (PreconditionViolationException ex) {
-			assertMessageEquals(ex, "executables must not be null");
+			assertMessageEquals(ex, "individual executables must not be null");
 		}
 	}
 
@@ -2940,7 +3352,7 @@ public class AssertionsTests {
 			assertAll((Executable[]) null);
 		}
 		catch (PreconditionViolationException ex) {
-			assertMessageEquals(ex, "executables must not be null");
+			assertMessageEquals(ex, "executables array must not be null or empty");
 		}
 	}
 
@@ -2968,7 +3380,7 @@ public class AssertionsTests {
 	@Test
 	void assertAllWithExecutablesThatThrowAssertionErrors() {
 		// @formatter:off
-		MultipleFailuresError multipleFailuresError = expectThrows(MultipleFailuresError.class, () ->
+		MultipleFailuresError multipleFailuresError = assertThrows(MultipleFailuresError.class, () ->
 			assertAll(
 				() -> assertFalse(true),
 				() -> assertFalse(true)
@@ -2985,7 +3397,7 @@ public class AssertionsTests {
 	@Test
 	void assertAllWithStreamOfExecutablesThatThrowAssertionErrors() {
 		// @formatter:off
-		MultipleFailuresError multipleFailuresError = expectThrows(MultipleFailuresError.class, () ->
+		MultipleFailuresError multipleFailuresError = assertThrows(MultipleFailuresError.class, () ->
 			assertAll(Stream.of(() -> assertFalse(true), () -> assertFalse(true)))
 		);
 		// @formatter:on
@@ -3026,66 +3438,38 @@ public class AssertionsTests {
 
 	@Test
 	void assertThrowsThrowable() {
-		assertThrows(EnigmaThrowable.class, () -> {
-			throw new EnigmaThrowable();
-		});
-	}
-
-	@Test
-	void assertThrowsCheckedException() {
-		assertThrows(IOException.class, () -> {
-			throw new IOException();
-		});
-	}
-
-	@Test
-	void assertThrowsRuntimeException() {
-		assertThrows(IllegalStateException.class, () -> {
-			throw new IllegalStateException();
-		});
-	}
-
-	@Test
-	void assertThrowsError() {
-		assertThrows(StackOverflowError.class, this::recurseIndefinitely);
-	}
-
-	// --- expectThrows --------------------------------------------------
-
-	@Test
-	void expectThrowsThrowable() {
-		EnigmaThrowable enigmaThrowable = expectThrows(EnigmaThrowable.class, () -> {
+		EnigmaThrowable enigmaThrowable = assertThrows(EnigmaThrowable.class, () -> {
 			throw new EnigmaThrowable();
 		});
 		assertNotNull(enigmaThrowable);
 	}
 
 	@Test
-	void expectThrowsCheckedException() {
-		IOException exception = expectThrows(IOException.class, () -> {
+	void assertThrowsCheckedException() {
+		IOException exception = assertThrows(IOException.class, () -> {
 			throw new IOException();
 		});
 		assertNotNull(exception);
 	}
 
 	@Test
-	void expectThrowsRuntimeException() {
-		IllegalStateException illegalStateException = expectThrows(IllegalStateException.class, () -> {
+	void assertThrowsRuntimeException() {
+		IllegalStateException illegalStateException = assertThrows(IllegalStateException.class, () -> {
 			throw new IllegalStateException();
 		});
 		assertNotNull(illegalStateException);
 	}
 
 	@Test
-	void expectThrowsError() {
-		StackOverflowError stackOverflowError = expectThrows(StackOverflowError.class, this::recurseIndefinitely);
+	void assertThrowsError() {
+		StackOverflowError stackOverflowError = assertThrows(StackOverflowError.class, this::recurseIndefinitely);
 		assertNotNull(stackOverflowError);
 	}
 
 	@Test
-	void expectThrowsWithExecutableThatDoesNotThrowAnException() {
+	void assertThrowsWithExecutableThatDoesNotThrowAnException() {
 		try {
-			expectThrows(IllegalStateException.class, () -> {
+			assertThrows(IllegalStateException.class, () -> {
 			});
 			expectAssertionFailedError();
 		}
@@ -3095,9 +3479,9 @@ public class AssertionsTests {
 	}
 
 	@Test
-	void expectThrowsWithExecutableThatThrowsAnUnexpectedException() {
+	void assertThrowsWithExecutableThatThrowsAnUnexpectedException() {
 		try {
-			expectThrows(IllegalStateException.class, () -> {
+			assertThrows(IllegalStateException.class, () -> {
 				throw new NumberFormatException();
 			});
 			expectAssertionFailedError();
@@ -3126,7 +3510,7 @@ public class AssertionsTests {
 
 	@Test
 	void assertTimeoutForExecutableThatThrowsAnException() {
-		RuntimeException exception = expectThrows(RuntimeException.class, () -> assertTimeout(ofMillis(500), () -> {
+		RuntimeException exception = assertThrows(RuntimeException.class, () -> assertTimeout(ofMillis(500), () -> {
 			throw new RuntimeException("not this time");
 		}));
 		assertMessageEquals(exception, "not this time");
@@ -3134,28 +3518,28 @@ public class AssertionsTests {
 
 	@Test
 	void assertTimeoutForExecutableThatThrowsAnAssertionFailedError() {
-		AssertionFailedError exception = expectThrows(AssertionFailedError.class,
+		AssertionFailedError exception = assertThrows(AssertionFailedError.class,
 			() -> assertTimeout(ofMillis(500), () -> fail("enigma")));
 		assertMessageEquals(exception, "enigma");
 	}
 
 	@Test
 	void assertTimeoutForExecutableThatCompletesAfterTheTimeout() {
-		AssertionFailedError error = expectThrows(AssertionFailedError.class,
+		AssertionFailedError error = assertThrows(AssertionFailedError.class,
 			() -> assertTimeout(ofMillis(50), () -> Thread.sleep(100)));
 		assertMessageStartsWith(error, "execution exceeded timeout of 50 ms by");
 	}
 
 	@Test
 	void assertTimeoutWithMessageForExecutableThatCompletesAfterTheTimeout() {
-		AssertionFailedError error = expectThrows(AssertionFailedError.class,
+		AssertionFailedError error = assertThrows(AssertionFailedError.class,
 			() -> assertTimeout(ofMillis(50), () -> Thread.sleep(100), "Tempus Fugit"));
 		assertMessageStartsWith(error, "Tempus Fugit ==> execution exceeded timeout of 50 ms by");
 	}
 
 	@Test
 	void assertTimeoutWithMessageSupplierForExecutableThatCompletesAfterTheTimeout() {
-		AssertionFailedError error = expectThrows(AssertionFailedError.class,
+		AssertionFailedError error = assertThrows(AssertionFailedError.class,
 			() -> assertTimeout(ofMillis(50), () -> Thread.sleep(100), () -> "Tempus" + " " + "Fugit"));
 		assertMessageStartsWith(error, "Tempus Fugit ==> execution exceeded timeout of 50 ms by");
 	}
@@ -3173,7 +3557,7 @@ public class AssertionsTests {
 
 	@Test
 	void assertTimeoutPreemptivelyForExecutableThatThrowsAnException() {
-		RuntimeException exception = expectThrows(RuntimeException.class,
+		RuntimeException exception = assertThrows(RuntimeException.class,
 			() -> assertTimeoutPreemptively(ofMillis(500), () -> {
 				throw new RuntimeException("not this time");
 			}));
@@ -3182,28 +3566,28 @@ public class AssertionsTests {
 
 	@Test
 	void assertTimeoutPreemptivelyForExecutableThatThrowsAnAssertionFailedError() {
-		AssertionFailedError exception = expectThrows(AssertionFailedError.class,
+		AssertionFailedError exception = assertThrows(AssertionFailedError.class,
 			() -> assertTimeoutPreemptively(ofMillis(500), () -> fail("enigma")));
 		assertMessageEquals(exception, "enigma");
 	}
 
 	@Test
 	void assertTimeoutPreemptivelyForExecutableThatCompletesAfterTheTimeout() {
-		AssertionFailedError error = expectThrows(AssertionFailedError.class,
+		AssertionFailedError error = assertThrows(AssertionFailedError.class,
 			() -> assertTimeoutPreemptively(ofMillis(50), () -> Thread.sleep(100)));
 		assertMessageEquals(error, "execution timed out after 50 ms");
 	}
 
 	@Test
 	void assertTimeoutPreemptivelyWithMessageForExecutableThatCompletesAfterTheTimeout() {
-		AssertionFailedError error = expectThrows(AssertionFailedError.class,
+		AssertionFailedError error = assertThrows(AssertionFailedError.class,
 			() -> assertTimeoutPreemptively(ofMillis(50), () -> Thread.sleep(100), "Tempus Fugit"));
 		assertMessageEquals(error, "Tempus Fugit ==> execution timed out after 50 ms");
 	}
 
 	@Test
 	void assertTimeoutPreemptivelyWithMessageSupplierForExecutableThatCompletesAfterTheTimeout() {
-		AssertionFailedError error = expectThrows(AssertionFailedError.class,
+		AssertionFailedError error = assertThrows(AssertionFailedError.class,
 			() -> assertTimeoutPreemptively(ofMillis(50), () -> Thread.sleep(100), () -> "Tempus" + " " + "Fugit"));
 		assertMessageEquals(error, "Tempus Fugit ==> execution timed out after 50 ms");
 	}

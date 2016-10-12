@@ -10,13 +10,10 @@
 
 package org.junit.platform.engine.support.descriptor;
 
-import static java.util.Collections.unmodifiableList;
 import static org.junit.platform.commons.meta.API.Usage.Experimental;
 import static org.junit.platform.commons.util.StringUtils.nullSafeToString;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
 import org.junit.platform.commons.meta.API;
@@ -37,9 +34,36 @@ public class JavaMethodSource implements JavaSource {
 
 	private static final long serialVersionUID = 1L;
 
-	private final Class<?> javaClass;
-	private final String javaMethodName;
-	private final Class<?>[] javaMethodParameterTypes;
+	private final String className;
+	private final String methodName;
+	private final String methodParameterTypes;
+
+	/**
+	 * Create a new {@code JavaMethodSource} using the supplied
+	 * class and method name.
+	 *
+	 * @param className the {@link Class} name; must not be {@code null} or blank
+	 * @param methodName the {@link Method} name; must not be {@code null} or blank
+	 */
+	public JavaMethodSource(String className, String methodName) {
+		this(className, methodName, null);
+	}
+
+	/**
+	 * Create a new {@code JavaMethodSource} using the supplied
+	 * class and method name.
+	 *
+	 * @param className the {@link Class} name; must not be {@code null} or blank
+	 * @param methodName the {@link Method} name; must not be {@code null} or blank
+	 * @param methodParameterTypes the {@link Method} parameter types as string
+	 */
+	public JavaMethodSource(String className, String methodName, String methodParameterTypes) {
+		Preconditions.notBlank(className, "Class name must not be null or blank");
+		Preconditions.notBlank(methodName, "Method name must not be null or blank");
+		this.className = className;
+		this.methodName = methodName;
+		this.methodParameterTypes = null;
+	}
 
 	/**
 	 * Create a new {@code JavaMethodSource} using the supplied
@@ -49,36 +73,30 @@ public class JavaMethodSource implements JavaSource {
 	 */
 	public JavaMethodSource(Method method) {
 		Preconditions.notNull(method, "method must not be null");
-		this.javaClass = method.getDeclaringClass();
-		this.javaMethodName = method.getName();
-		this.javaMethodParameterTypes = method.getParameterTypes();
+		this.className = method.getDeclaringClass().getName();
+		this.methodName = method.getName();
+		this.methodParameterTypes = nullSafeToString(method.getParameterTypes());
 	}
 
 	/**
-	 * Get the declaring {@linkplain Class class} of this source.
-	 *
-	 * @see Method#getDeclaringClass()
+	 * Get the declaring {@link Class} name of this source.
 	 */
-	public final Class<?> getJavaClass() {
-		return this.javaClass;
+	public String getClassName() {
+		return this.className;
 	}
 
 	/**
-	 * Get the method name of this source.
-	 *
-	 * @see Method#getName()
+	 * Get the {@link Method} name of this source.
 	 */
-	public final String getJavaMethodName() {
-		return this.javaMethodName;
+	public final String getMethodName() {
+		return this.methodName;
 	}
 
 	/**
-	 * Get the method parameter types of this source.
-	 *
-	 * @see Method#getParameterTypes()
+	 * Get the {@link Method} parameter types of this source.
 	 */
-	public final List<Class<?>> getJavaMethodParameterTypes() {
-		return unmodifiableList(Arrays.asList(this.javaMethodParameterTypes));
+	public final String getMethodParameterTypes() {
+		return this.methodParameterTypes;
 	}
 
 	@Override
@@ -90,23 +108,22 @@ public class JavaMethodSource implements JavaSource {
 			return false;
 		}
 		JavaMethodSource that = (JavaMethodSource) o;
-		return Objects.equals(this.javaClass, that.javaClass)
-				&& Objects.equals(this.javaMethodName, that.javaMethodName)
-				&& Arrays.equals(this.javaMethodParameterTypes, that.javaMethodParameterTypes);
+		return Objects.equals(this.className, that.className) && Objects.equals(this.methodName, that.methodName)
+				&& Objects.equals(this.methodParameterTypes, that.methodParameterTypes);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.javaClass, this.javaMethodName) + Arrays.hashCode(this.javaMethodParameterTypes);
+		return Objects.hash(this.className, this.methodName, this.methodParameterTypes);
 	}
 
 	@Override
 	public String toString() {
 		// @formatter:off
 		return new ToStringBuilder(this)
-				.append("javaClass", this.javaClass.getName())
-				.append("javaMethodName", this.javaMethodName)
-				.append("javaMethodParameterTypes", nullSafeToString(this.javaMethodParameterTypes))
+				.append("className", this.className)
+				.append("methodName", this.methodName)
+				.append("methodParameterTypes", this.methodParameterTypes)
 				.toString();
 		// @formatter:on
 	}

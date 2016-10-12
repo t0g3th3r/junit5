@@ -33,7 +33,6 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.junit.platform.commons.util.StringUtils;
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.engine.TestSource;
 import org.junit.platform.engine.reporting.ReportEntry;
@@ -156,9 +155,8 @@ class XmlReportWriter {
 			}
 			else if (source instanceof JavaMethodSource) {
 				JavaMethodSource javaMethodSource = (JavaMethodSource) source;
-				List<Class<?>> parameterTypes = javaMethodSource.getJavaMethodParameterTypes();
-				return String.format("%s(%s)", javaMethodSource.getJavaMethodName(), StringUtils.nullSafeToString(
-					Class::getName, parameterTypes.toArray(new Class<?>[parameterTypes.size()])));
+				return String.format("%s(%s)", javaMethodSource.getMethodName(),
+					javaMethodSource.getMethodParameterTypes());
 			}
 		}
 
@@ -171,10 +169,10 @@ class XmlReportWriter {
 		if (optionalSource.isPresent()) {
 			TestSource source = optionalSource.get();
 			if (source instanceof JavaClassSource) {
-				return ((JavaClassSource) source).getJavaClass().getName();
+				return ((JavaClassSource) source).getClassName();
 			}
 			else if (source instanceof JavaMethodSource) {
-				return ((JavaMethodSource) source).getJavaClass().getName();
+				return ((JavaMethodSource) source).getClassName();
 			}
 		}
 

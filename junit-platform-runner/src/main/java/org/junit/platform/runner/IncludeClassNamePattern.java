@@ -32,7 +32,7 @@ import org.junit.platform.engine.discovery.ClassNameFilter;
  *
  * @since 1.0
  * @see JUnitPlatform
- * @see org.junit.platform.engine.discovery.ClassNameFilter#includeClassNamePattern
+ * @see org.junit.platform.engine.discovery.ClassNameFilter#includeClassNamePatterns
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
@@ -43,6 +43,9 @@ public @interface IncludeClassNamePattern {
 
 	/**
 	 * Regular expression used to match against fully qualified class names.
+	 *
+	 * <p>Defaults to {@code "^.*Tests?$"} which matches against class names
+	 * ending in {@code Test} or {@code Tests} (in any package).
 	 */
 	String value() default ClassNameFilter.STANDARD_INCLUDE_PATTERN;
 
